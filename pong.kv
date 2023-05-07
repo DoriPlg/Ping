@@ -4,11 +4,14 @@
     ball: pong_ball
     player1: player_left
     player2: player_right
+    pop_up: mess
+
 
     canvas:
         Rectangle:
             pos: self.center_x - 5, 0
             size: 10, self.height
+
                 
     Label:
         font_size: 70  
@@ -36,6 +39,19 @@
         x: root.width - self.width
         center_y: root.center_y
 
+    Message:
+        id: mess
+        size: root.pop_up.exist*500,root.pop_up.exist*200
+        x: root.center_x - 250
+        y: root.center_y - 100
+    
+    Label:
+        font_size: 50 * root.pop_up.exist
+        color: 0, 0, 0, 1
+        center_x: root.center_x
+        center_y: root.center_y            
+        text: str(root.pop_up.text)
+
 <PongBall>:
     size: 50, 50
     canvas:
@@ -50,3 +66,11 @@
         Rectangle:
             pos: self.pos
             size: self.size
+
+<Message>:
+    canvas:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    
+    

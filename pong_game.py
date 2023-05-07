@@ -1,6 +1,6 @@
 import kivy
 from kivy.properties import (
-    NumericProperty, ReferenceListProperty, ObjectProperty
+    NumericProperty, ReferenceListProperty, ObjectProperty, StringProperty
     )
 from kivy.vector import Vector
 from kivy.app import App
@@ -14,10 +14,14 @@ class PongGame(Widget):
     ball = ObjectProperty(None)
     player1 = ObjectProperty(None)
     player2 = ObjectProperty(None)
+    pop_up = ObjectProperty(None)
 
     def serve_ball(self, vel=(4, 0)):
         self.ball.center = self.center
         self.ball.velocity = vel
+
+    def stop_ball(self):
+        self.ball.velocity = (0,0)
 
     def update(self, dt):
         self.ball.move()
@@ -35,7 +39,7 @@ class PongGame(Widget):
             self.ball.velocity_x *= -1  #When you want it whacky, change here
         
         
-        # went of to a side to score point?
+        # went off to a side to score point?
         if self.ball.x < self.x:
             self.player2.score += 1
             self.serve_ball(vel=(4, 0))
@@ -43,6 +47,14 @@ class PongGame(Widget):
             self.player1.score += 1
             self.serve_ball(vel=(-4, 0))
 
+        if self.player1.score == 10:
+            self.pop_up.exist = 1
+            self.pop_up.text = "Player 1 wins!"
+            self.stop_ball()
+        if self.player2.score == 10:
+            self.pop_up.exist = 1
+            self.pop_up.text = "Player 2 wins!"
+            self.stop_ball()
         
     def on_touch_move(self, touch):
         if touch.x < self.width / 3:
@@ -91,6 +103,11 @@ class PongPaddle(Widget):
             bounced = Vector(-1 * vx, vy)
             vel = bounced * 1.1
             ball.velocity = vel.x, vel.y + offset
+
+#_________________________________________
+class Message(Widget):
+    exist = NumericProperty(0)
+    text = StringProperty("")
 
 #_________________________________________
 
