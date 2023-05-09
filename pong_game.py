@@ -62,12 +62,14 @@ class PongGame(Widget):
         if touch.x > self.width - self.width / 3:
             self.player2.center_y = touch.y
 
-    def on_touch_down(self,touch):
-        if self.pause.exist == 1: pass
-        else:
-            if (self.width * 2 / 5 < touch.x < self.width * 3 / 5) and (self.height / 5 < touch.y < self.height * 4 / 5):
-                self.stop_ball()
-                self.pause.exist = 1
+
+    def click(self, order):
+        if order == "s":
+            self.player1.score = 0
+            self.player2.score = 0
+        self.pause.exist = 0
+        self.serve_ball()
+
 
 
 #_________________________________________
