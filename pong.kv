@@ -4,7 +4,8 @@
     ball: pong_ball
     player1: player_left
     player2: player_right
-    pop_up: mess
+    pop_up: pop
+    pause: pause
 
 
     canvas:
@@ -40,17 +41,36 @@
         center_y: root.center_y
 
     Message:
-        id: mess
-        size: root.pop_up.exist*500,root.pop_up.exist*200
-        x: root.center_x - 250
-        y: root.center_y - 100
-    
-    Label:
-        font_size: 50 * root.pop_up.exist
-        color: 0, 0, 0, 1
-        center_x: root.center_x
-        center_y: root.center_y            
-        text: str(root.pop_up.text)
+        id: pop
+        size: root.pop_up.exist*root.width / 3,root.pop_up.exist*root.height / 3
+        x: root.width / 3
+        y: root.height / 3
+        Label:
+            font_size: 50 * root.pop_up.exist
+            color: 0, 0, 0, 1
+            center_x: root.center_x
+            center_y: root.center_y            
+            text: str(root.pop_up.text)
+
+    Message:
+        id: pause
+        size: root.pause.exist*root.width / 3,root.pause.exist*root.height / 3
+        x: root.width / 3
+        y: root.height / 3
+        BoxLayout:
+            size: root.pause.exist*root.width/3, root.pause.exist*root.height/3
+            x: root.width / 3
+            y: root.height / 3  
+            orientation: 'horizontal'
+            Button:
+                text: 'return'
+                font_size: root.pause.exist*40
+                background_color: (1, 1, 1, root.pause.exist)
+            Button:
+                text: 'start\nover'
+                font_size: root.pause.exist*40
+                background_color: (1, 1, 1, root.pause.exist)
+
 
 <PongBall>:
     size: 50, 50

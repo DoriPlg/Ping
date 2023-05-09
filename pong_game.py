@@ -15,6 +15,7 @@ class PongGame(Widget):
     player1 = ObjectProperty(None)
     player2 = ObjectProperty(None)
     pop_up = ObjectProperty(None)
+    pause = ObjectProperty(None)
 
     def serve_ball(self, vel=(4, 0)):
         self.ball.center = self.center
@@ -25,7 +26,6 @@ class PongGame(Widget):
 
     def update(self, dt):
         self.ball.move()
-
         # bounce of paddles
         self.player1.bounce_ball(self.ball)
         self.player2.bounce_ball(self.ball)
@@ -61,6 +61,13 @@ class PongGame(Widget):
             self.player1.center_y = touch.y
         if touch.x > self.width - self.width / 3:
             self.player2.center_y = touch.y
+
+    def on_touch_down(self,touch):
+        if self.pause.exist == 1: pass
+        else:
+            if (self.width * 2 / 5 < touch.x < self.width * 3 / 5) and (self.height / 5 < touch.y < self.height * 4 / 5):
+                self.stop_ball()
+                self.pause.exist = 1
 
 
 #_________________________________________
