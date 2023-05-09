@@ -47,11 +47,11 @@ class PongGame(Widget):
             self.player1.score += 1
             self.serve_ball(vel=(-4, 0))
 
-        if self.player1.score == 10:
+        if self.player1.score == 5:
             self.pop_up.exist = 1
             self.pop_up.text = "Player 1 wins!"
             self.stop_ball()
-        if self.player2.score == 10:
+        if self.player2.score == 5:
             self.pop_up.exist = 1
             self.pop_up.text = "Player 2 wins!"
             self.stop_ball()
@@ -68,6 +68,7 @@ class PongGame(Widget):
             self.player1.score = 0
             self.player2.score = 0
         self.pause.exist = 0
+        self.pop_up.exist = 0
         self.serve_ball()
 
 
