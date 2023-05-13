@@ -1,7 +1,0 @@
-start working:
-
-
-cd ~/Documents/Code
-source kivy_venv/bin/activate
-cd PONG
-python3 pong_game.py
