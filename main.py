@@ -7,17 +7,33 @@ from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.clock import Clock
 
-
 #_________________________________________
 
-class PongGame(Widget):
+def get_high():
+        f = open("HS.txt")
+        high = f.read()
+        f.close()
+        return high
+    
+def add_high(new_score):
+        f = open("HS.txt", "r")
+        current = int(f.read())
+        f.close()
+        if new_score>current:
+            f = open("HS.txt", "w")
+            f.write(str(new_score))
+            f.close()
+
+
+class PingGame(Widget):
     ball = ObjectProperty(None)
     player1 = ObjectProperty(None)
-    player2 = ObjectProperty(None)
     pop_up = ObjectProperty(None)
     pause = ObjectProperty(None)
-
-    def serve_ball(self, vel=(4, 0)):
+    highscore = NumericProperty(get_high())
+    
+    
+    def serve_ball(self, vel=(0, 4)):
         self.ball.center = self.center
         self.ball.velocity = vel
 
@@ -27,46 +43,26 @@ class PongGame(Widget):
     def update(self, dt):
         self.ball.move()
         # bounce of paddles
-        self.player1.bounce_ball(self.ball)
-        self.player2.bounce_ball(self.ball)
-
-        # bounce off top and bottom
-        if (self.ball.y < 0) or (self.ball.top > self.height):
-            self.ball.velocity_y *= -1
-
+        self.player1.score += self.player1.bounce_ball(self.ball)
+        
         # bounce off left and right
-        if (self.ball.x < 0) or (self.ball.right > self.width):
-            self.ball.velocity_x *= -1  #When you want it whacky, change here
+        if (self.ball.x < 0) or (self.ball.right > self.width): self.ball.velocity_x *= -1  #When you want it whacky, change here
         
         
-        # went off to a side to score point?
-        if self.ball.x < self.x:
-            self.player2.score += 1
-            self.serve_ball(vel=(4, 0))
-        if self.ball.right > self.width:
-            self.player1.score += 1
-            self.serve_ball(vel=(-4, 0))
+        # went off to a bottom to lose?
+        if self.ball.y < self.y:
+            add_high(self.player1.score)
+            self.highscore = get_high()
+            self.player1.score = 0
+            self.serve_ball(vel=(0, 4))
 
-        if self.player1.score == 5:
-            self.pop_up.exist = 1
-            self.pop_up.text = "Player 1 wins!"
-            self.stop_ball()
-        if self.player2.score == 5:
-            self.pop_up.exist = 1
-            self.pop_up.text = "Player 2 wins!"
-            self.stop_ball()
         
     def on_touch_move(self, touch):
-        if touch.x < self.width / 3:
-            self.player1.center_y = touch.y
-        if touch.x > self.width - self.width / 3:
-            self.player2.center_y = touch.y
+        if touch.y < self.width / 3: self.player1.center_x = touch.x
 
 
     def click(self, order):
-        if order == "s":
-            self.player1.score = 0
-            self.player2.score = 0
+        if order == "s": self.player1.score = 0
         self.pause.exist = 0
         self.pop_up.exist = 0
         self.serve_ball()
@@ -75,10 +71,10 @@ class PongGame(Widget):
 
 #_________________________________________
 
-class PongApp(App):
+class PingApp(App):
 
     def build(self):
-        game = PongGame()
+        game = PingGame()
         game.serve_ball()
         Clock.schedule_interval(game.update, 1.0/60.0)
         return game
@@ -86,7 +82,7 @@ class PongApp(App):
 
 #_________________________________________
 
-class PongBall(Widget):
+class PingBall(Widget):
     # velocity of the ball on x and y axis
     velocity_x = NumericProperty(0)
     velocity_y = NumericProperty(0)
@@ -99,20 +95,21 @@ class PongBall(Widget):
     #  will be called in equal intervals to animate the ball
     def move(self):
         self.pos = Vector(*self.velocity) + self.pos
+        self.velocity_y -= 0.2
 
 
 #_________________________________________
 
-class PongPaddle(Widget):
+class PingPaddle(Widget):
     score = NumericProperty(0)
 
     def bounce_ball(self, ball):
         if self.collide_widget(ball):
             vx, vy = ball.velocity
-            offset = (ball.center_y - self.center_y) / (self.height / 2)
-            bounced = Vector(-1 * vx, vy)
-            vel = bounced * 1.1
-            ball.velocity = vel.x, vel.y + offset
+            offset = (ball.center_x - self.center_x) / (self.width / 2) 
+            ball.velocity =  Vector(vx+ offset*2, vy* -0.95 + abs(offset) )*1.05
+            return 1
+        return 0
 
 #_________________________________________
 class Message(Widget):
@@ -121,5 +118,4 @@ class Message(Widget):
 
 #_________________________________________
 
-if __name__ == '__main__':
-    PongApp().run()
+if __name__ == '__main__': PingApp().run()
