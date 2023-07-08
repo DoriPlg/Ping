@@ -10,15 +10,15 @@ from kivy.clock import Clock
 #_________________________________________
 
 def get_high():
-        f = open("HS.txt")
-        high = f.read()
-        f.close()
+        try: 
+            f = open("HS.txt", "r") 
+            high = f.read()
+            f.close()
+        except: high = 0
         return high
     
 def add_high(new_score):
-        f = open("HS.txt", "r")
-        current = int(f.read())
-        f.close()
+        current = int(get_high())
         if new_score>current:
             f = open("HS.txt", "w")
             f.write(str(new_score))
